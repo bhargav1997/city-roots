@@ -8,6 +8,8 @@ import CouponImg from "../assets/images/coupon.jpg";
 import DiscountCoupon2 from "../assets/images/discount-coupon.jpg";
 import QRCodeImage from "../assets/images/QRCodeImage.png";
 import { Button, Card, Modal } from "react-bootstrap";
+import PropTypes from "prop-types";
+import LastChancesCoupons from "./LastChancesCoupons";
 
 // Sample coupon data
 const couponData = [
@@ -41,9 +43,19 @@ const couponData = [
       expiration: "Expires: Oct 15, 2024",
       terms: "Valid in-store only.",
    },
+   {
+      id: 4,
+      category: "Restaurants",
+      title: "15% off on Restaurants",
+      text: "Save 15% on your next food order.",
+      img: `${DiscountCoupon2}`,
+      description: "Save on your food bill with this 15% discount.",
+      expiration: "Expires: Oct 15, 2024",
+      terms: "Valid in-store only.",
+   },
 ];
 
-function Coupon() {
+function Coupon({ couponTitle }) {
    const [searchTerm, setSearchTerm] = useState("");
    const [filterCategory, setFilterCategory] = useState("All");
    const [selectedCoupon, setSelectedCoupon] = useState(null);
@@ -60,64 +72,77 @@ function Coupon() {
    const handleClose = () => setSelectedCoupon(null);
 
    return (
-      <div className='container mt-4'>
-         <h1 className='mb-4 fw-bold'>All Coupons</h1>
+      <>
+         <div className='container mt-4'>
+            <h1 className='mb-4 fw-bold'>{couponTitle}</h1>
 
-         {/* Search and Filter Section */}
-         <InputGroup className='mb-4'>
-            <Form.Control placeholder='Search for coupons...' onChange={(e) => setSearchTerm(e.target.value)} />
-            <DropdownButton
-               variant='outline-secondary'
-               title={filterCategory}
-               id='input-group-dropdown-1'
-               onSelect={(eventKey) => setFilterCategory(eventKey)}>
-               <Dropdown.Item eventKey='All'>All</Dropdown.Item>
-               <Dropdown.Item eventKey='Electronics'>Electronics</Dropdown.Item>
-               <Dropdown.Item eventKey='Fashion'>Fashion</Dropdown.Item>
-               <Dropdown.Item eventKey='Groceries'>Groceries</Dropdown.Item>
-            </DropdownButton>
-         </InputGroup>
+            {/* Search and Filter Section */}
+            <InputGroup className='mb-4'>
+               <Form.Control placeholder='Search for coupons...' onChange={(e) => setSearchTerm(e.target.value)} />
+               <DropdownButton
+                  variant='outline-secondary'
+                  title={filterCategory}
+                  id='input-group-dropdown-1'
+                  onSelect={(eventKey) => setFilterCategory(eventKey)}>
+                  <Dropdown.Item eventKey='All'>All</Dropdown.Item>
+                  <Dropdown.Item eventKey='Electronics'>Electronics</Dropdown.Item>
+                  <Dropdown.Item eventKey='Fashion'>Fashion</Dropdown.Item>
+                  <Dropdown.Item eventKey='Groceries'>Groceries</Dropdown.Item>
+               </DropdownButton>
+            </InputGroup>
 
-         {/* Displaying Coupons */}
-         <div className='d-flex flex-wrap justify-content-between w-100'>
-            {filteredCoupons.length > 0 ? (
-               filteredCoupons.map((coupon) => <CouponCard key={coupon.id} coupon={coupon} onRedeem={handleRedeem} />)
-            ) : (
-               <p>No coupons found for the selected category or search term.</p>
-            )}
-         </div>
-         {/* Redeem Modal */}
-         <Modal show={!!selectedCoupon} onHide={handleClose} centered>
-            <Modal.Header closeButton>
-               <Modal.Title>Redeem Coupon</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-               {selectedCoupon && (
-                  <>
-                     <Card.Img variant='top' src={selectedCoupon.img} />
-                     <h4 className='mt-3'>{selectedCoupon.title}</h4>
-                     <p>{selectedCoupon.description}</p>
-                     <p>
-                        <strong>Expiration:</strong> {selectedCoupon.expiration}
-                     </p>
-                     <p>
-                        <strong>Terms:</strong> {selectedCoupon.terms}
-                     </p>
-                     <div className='text-center'>
-                        <h4 className='m-0'>Scan Me</h4>
-                        <img src={QRCodeImage} alt='QR Code' className='img-fluid' />
-                     </div>
-                  </>
+            {/* Displaying Coupons */}
+            <div className='d-flex flex-wrap justify-content-between w-100'>
+               {filteredCoupons.length > 0 ? (
+                  filteredCoupons.map((coupon) => <CouponCard key={coupon.id} coupon={coupon} onRedeem={handleRedeem} />)
+               ) : (
+                  <p>No coupons found for the selected category or search term.</p>
                )}
-            </Modal.Body>
-            <Modal.Footer>
-               <Button variant='secondary' onClick={handleClose}>
-                  Close
-               </Button>
-            </Modal.Footer>
-         </Modal>
-      </div>
+            </div>
+            {/* Redeem Modal */}
+            <Modal show={!!selectedCoupon} onHide={handleClose} centered>
+               <Modal.Header closeButton>
+                  <Modal.Title>Redeem Coupon</Modal.Title>
+               </Modal.Header>
+               <Modal.Body>
+                  {selectedCoupon && (
+                     <>
+                        <Card.Img variant='top' src={selectedCoupon.img} />
+                        <h4 className='mt-3'>{selectedCoupon.title}</h4>
+                        <p>{selectedCoupon.description}</p>
+                        <p>
+                           <strong>Expiration:</strong> {selectedCoupon.expiration}
+                        </p>
+                        <p>
+                           <strong>Terms:</strong> {selectedCoupon.terms}
+                        </p>
+                        <div className='text-center'>
+                           <h4 className='m-0'>Scan Me</h4>
+                           <img src={QRCodeImage} alt='QR Code' className='img-fluid' />
+                        </div>
+                     </>
+                  )}
+               </Modal.Body>
+               <Modal.Footer>
+                  <Button variant='secondary' onClick={handleClose}>
+                     Close
+                  </Button>
+               </Modal.Footer>
+            </Modal>
+         </div>
+         <div className='container'>
+            <LastChancesCoupons />
+         </div>
+      </>
    );
 }
+
+Coupon.defaultProps = {
+   couponTitle: "LootBoxes Shop",
+};
+
+Coupon.propTypes = {
+   couponTitle: PropTypes.string,
+};
 
 export default Coupon;
